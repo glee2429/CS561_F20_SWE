@@ -1,7 +1,7 @@
 # CS561_F20_SWE
 CS 561 Software Engineering Project Codebase
 
-## How to Use
+## How to Get Started
 1. Download the file and unzip it.
 2. Create a directory.
 
@@ -29,4 +29,6 @@ This command creates a folder "venv" that includes a Python interpreter and scri
 $ source venv/bin/activate
 (venv) $
 ```
+Then, you can find (venv) to the left of the prompt which indicates your virtual environment is successfully activated.
+
 
