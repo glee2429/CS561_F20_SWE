@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block styling %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index_style.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="content-text">
+    <h2>Welcome to the Flask Stock Portfolio App!</h2>
+    <p>Track your personal stock portfolio</p>
+    <p>and view historical stock charts.</p>
+  </div>
+
+  <div class="content-image">
+    <img src="{{ url_for('static', filename='img/computer_code.jpg') }}" alt="computer on a desk">
+  </div>
+</div>
+{% endblock %}
