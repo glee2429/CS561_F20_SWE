@@ -62,4 +62,9 @@ Flask offers development servers that comes with the package. In order to use th
 (venv) $ export FLASK_ENV=development
 ```
 
+## Finally, let's run your Flask app!
+```terminal
+(venv) $ flask run
+```
+
 
