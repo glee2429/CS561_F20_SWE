@@ -1,6 +1,7 @@
 # CS561 Software Engineering - Fall 2020
 #### Project: Stock Portfolio Management App 
-Project Description: The US stock market reaches a record high valuation due to the exponential growth of tech stocks, which can help young people with limited capital create an additional income source while the interest rate is near zero, and the price level is continuously rising. However, there's a significant gap in exposure and practice for stock trading. To alleviate this problem and expand the access to stock trading, we have decided to create a stock trading simulation game that allows people to understand the supply and demand sides and practice holding/buying/selling stocks to build their portfolio.
+Project Description: The US stock market reaches a record high valuation due to the exponential growth of tech stocks, which can help young people with limited capital create an additional income source while the interest rate is near zero, and the price level is continuously rising. However, there's a significant gap in exposure and practice for stock trading. To alleviate this problem and expand the access to stock trading, we have decided to create a stock portfolio management app that allows people to understand the supply and demand sides and practice holding/buying/selling stocks.
+
 #### Team: Rohan Borkar, Adam Sunderman, Saurabh Satish Desai, Ga Young Lee
 Roles & Responsibilities: 
 * Rohan Borkar: Product Owner / Developer
