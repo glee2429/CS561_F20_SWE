@@ -55,5 +55,11 @@ Once the requirements for the project are returned in terminal, you can save the
 ```terminal
 (venv)$ pip freeze > requirements.txt
 ```
+## Development Server Setup Using Flask
+Flask offers development servers that comes with the package. In order to use this mode, we need to specify that the target we're interested in is <code> app.py </code> and specify that the server is in development mode by using the commands below. 
+```terminal
+(venv) $ export FLASK_APP=app.py
+(venv) $ export FLASK_ENV=development
+```
 
 
