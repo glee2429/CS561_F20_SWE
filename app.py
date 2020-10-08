@@ -13,14 +13,6 @@ def index():
 def about():
     return render_template('about.html')
 
-@app.route('/hello/<message>')
-def hello_message(message):
-    return f'<h1>Welcome {escape(message)}!</h1>'
-
-@app.route('/blog_posts/<int:post_id>')
-def display_blog_post(post_id):
-    return f'<h1>Blog Post #{post_id}...</h1>'
-
 @app.route('/add_stock', methods=['GET', 'POST'])
 def add_stock():
     if request.method == 'POST':
@@ -31,6 +23,20 @@ def add_stock():
         return redirect(url_for('list_stocks'))
 
     return render_template('add_stock.html')
+
+@app.route('/<int:userid>/stocks', methods=['GET', 'POST', 'DELETE'])
+def userstocks(userid):
+	if request.method == 'GET':
+		# Get all of a users stocks
+		return 'GET %d' % userid
+	elif request.method == 'POST':
+		# Add stocks to a users account
+		return 'POST %d' % userid
+	elif request.method == 'DELETE':
+		# Remove stocks from a users account
+		return 'DELETE %d' % userid
+	else:
+		return 'BAD METHOD %d' % userid
 
 @app.route('/stocks')
 def list_stocks():
