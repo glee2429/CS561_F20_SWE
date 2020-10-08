@@ -70,8 +70,18 @@ Flask offers development servers that comes with the package. In order to use th
 ```
 
 ## Finally, let's run your Flask app on your local server!
+Use the command below and go to <code> http://127.0.0.1:5000/</code> to check out your Flask app on your local server. 
+
 ```terminal
 (venv) $ flask run
+
+ * Serving Flask app "app.py" (lazy loading)
+ * Environment: development
+ * Debug mode: on
+ * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: ***-***-***
 ```
 
 
