@@ -1,5 +1,6 @@
-# CS561_F20_SWE
-CS 561 Software Engineering Project Codebase
+# CS561 Software Engineering - Fall 2020
+Project: Stock Portfolio Management App 
+Team: Rohan Borkar, Adam Sunderman, Saurabh Satish Desai, Ga Young Lee
 
 ## How to Get Started
 1. Download the file and unzip it.
