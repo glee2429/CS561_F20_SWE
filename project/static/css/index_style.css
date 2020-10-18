@@ -1,0 +1,36 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+  margin: 1em 0;
+}
+
+.content-text {
+  margin: 10px 0;
+}
+.content-text h2, p {
+  text-align: center;
+  padding: 0 1.0em;
+}
+
+.content-text h2 {
+  font-size: 2rem;
+}
+
+.content-text p {
+  font-size: 1.25rem;
+  margin-top: 0.5em;
+}
+
+.content-image {
+  margin: auto;
+}
+
+@media (max-width: 650px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .container h2, p {
+    padding: 0 0.5em;
+  }
+}

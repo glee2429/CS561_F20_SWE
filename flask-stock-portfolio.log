@@ -1,0 +1,17 @@
+Starting the Flask Stock Portfolio App...
+Starting the Flask Stock Portfolio App...
+Starting the Flask Stock Portfolio App...
+2020-10-07 22:56:33,806 INFO: Starting the Flask Stock Portfolio App... [in app.py:15]
+2020-10-07 22:57:05,675 INFO: Starting the Flask Stock Portfolio App... [in app.py:15]
+2020-10-07 22:57:05,940 INFO: Starting the Flask Stock Portfolio App... [in app.py:15]
+2020-10-07 22:58:36,296 INFO: Starting the Flask Stock Portfolio App... [in app.py:16]
+2020-10-07 23:00:12,743 INFO: Starting the Flask Stock Portfolio App... [in app.py:17]
+2020-10-07 23:01:09,696 INFO: Starting the Flask Stock Portfolio App... [in app.py:19]
+2020-10-07 23:01:30,050 INFO: Starting the Flask Stock Portfolio App... [in app.py:19]
+2020-10-07 23:01:30,313 INFO: Starting the Flask Stock Portfolio App... [in app.py:19]
+2020-10-07 23:02:20,028 INFO: Starting the Flask Stock Portfolio App... [in app.py:19]
+2020-10-07 23:11:07,598 INFO: Starting the Flask Stock Portfolio App... [in app.py:22]
+2020-10-07 23:11:07,868 INFO: Starting the Flask Stock Portfolio App... [in app.py:22]
+2020-10-07 23:11:12,651 INFO: Calling the index() function. [in app.py:26]
+2020-10-07 23:11:27,621 INFO: Added new stock (SBUX)! [in app.py:52]
+2020-10-07 23:12:51,622 INFO: Calling the index() function. [in app.py:26]

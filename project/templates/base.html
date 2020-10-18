@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Flask Stock Portfolio App</title>
+
+    <!-- Local CSS file for styling the application-->
+   <link rel="stylesheet" href="{{ url_for('static', filename='css/base_style.css') }}">
+   <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.png') }}">  <!-- NEW!! -->
+
+   <!-- Additional Styling -->
+   {% block styling %}
+   {% endblock %}
+  </head>
+
+  <body>
+    <div class="grid-container">
+
+      <header>
+        <nav class="nav">
+          <ul class="nav-list">
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('stocks.index') }}">Flask Stock Portfolio App</a></li>
+          </ul>
+          <ul class="nav-list">
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('stocks.list_stocks') }}">List Stocks</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('stocks.add_stock') }}">Add Stock</a></li>
+          </ul>
+        </nav>
+      </header>
+
+    <div class="messages">
+      <!-- flash messages - supported categories: success, info, error, message (default) -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="flash-message flash-message-{{ category }}">
+              <p>{{ message }}</p>
+              <span onclick="this.parentElement.style.opacity=0;">&times;</span>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
+
+
+    <main class="content">
+        <!-- child template -->
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <h3> CS 561 Software Engineering Project Fall 2020</h3>
+    </footer>
+
+    </div>
+  </body>
+
+</html>

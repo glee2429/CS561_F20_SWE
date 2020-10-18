@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Users/destiny/CS561_F20_SWE/venv"
+VIRTUAL_ENV="/Users/destiny/flask-stock-portfolio-code/venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

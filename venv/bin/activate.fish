@@ -29,7 +29,7 @@ end
 # unset irrelevant variables
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/Users/destiny/CS561_F20_SWE/venv"
+set -gx VIRTUAL_ENV "/Users/destiny/flask-stock-portfolio-code/venv"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH
