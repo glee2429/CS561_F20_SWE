@@ -1,0 +1,5 @@
+# Instance Folder - used for run-time files
+instance/*.cfg
+instance/*.db
+instance/*.log
+instance/*.log*
