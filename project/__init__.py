@@ -3,6 +3,20 @@ from logging.handlers import RotatingFileHandler
 import logging
 from flask.logging import default_handler
 import os
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from flask_bcrypt import Bcrypt
+
+#######################
+#### Configuration ####
+#######################
+
+# Create the instances of the Flask extensions in the global scope,
+# but without any arguments passed in. These instances are not
+# attached to the Flask application at this point.
+database = SQLAlchemy()
+db_migration = Migrate()
+bcrypt = Bcrypt()  # NEW!!
 
 ######################################
 #### Application Factory Function ####
@@ -16,12 +30,25 @@ def create_app():
     config_type = os.getenv('CONFIG_TYPE', 'config.DevelopmentConfig')
     app.config.from_object(config_type)
 
+    initialize_extensions(app)
     register_blueprints(app)
     configure_logging(app)
+    register_error_pages(app)
     register_app_callbacks(app)
-    register_error_pages(app)  # NEW!!!
     return app
 
+
+#######################
+### Helper Function ###
+#######################
+
+
+def initialize_extensions(app):
+    # Since the application instance is now created, pass it to each Flask
+    # extension instance to bind it to the Flask application instance (app)
+    database.init_app(app)
+    db_migration.init_app(app, database)
+    bcrypt.init_app(app)  # NEW!!
 
 def register_blueprints(app):
     # Import the blueprints
@@ -32,6 +59,7 @@ def register_blueprints(app):
     # with the Flask application instance (app)
     app.register_blueprint(stocks_blueprint)
     app.register_blueprint(users_blueprint, url_prefix='/users')
+
 
 def configure_logging(app):
     # Logging Configuration
@@ -47,6 +75,17 @@ def configure_logging(app):
     app.logger.removeHandler(default_handler)
 
     app.logger.info('Starting the Flask Stock Portfolio App...')
+
+
+def register_error_pages(app):
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return render_template('404.html'), 404
+
+    @app.errorhandler(405)
+    def page_not_found(e):
+        return render_template('405.html'), 405
+
 
 def register_app_callbacks(app):
     @app.before_request
@@ -65,12 +104,3 @@ def register_app_callbacks(app):
     @app.teardown_appcontext
     def app_teardown_appcontext(error=None):
         app.logger.info('Calling teardown_appcontext() for the Flask application...')
-
-def register_error_pages(app):
-    @app.errorhandler(404)
-    def page_not_found(e):
-        return render_template('404.html'), 404
-    
-    @app.errorhandler(405)
-    def page_not_found(e):
-        return render_template('405.html'), 405

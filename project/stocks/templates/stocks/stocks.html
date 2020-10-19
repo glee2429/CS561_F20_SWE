@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block styling %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/stocks_style.css') }}">
+{% endblock %}
+
 {% block content %}
 <h2>List of Stocks:</h2>
 <br>
@@ -13,10 +17,12 @@
   </tr>
 
   <!-- Table Elements (Rows) -->
-  <tr>
-    <td>{{ session['stock_symbol'] }}</td>
-    <td>{{ session['number_of_shares'] }}</td>
-    <td>${{ session['purchase_price'] }}</td>
-  </tr>
+  {% for stock in stocks %}
+    <tr>
+      <td>{{ stock.stock_symbol }}</td>
+      <td>{{ stock.number_of_shares }}</td>
+      <td>${{ stock.purchase_price / 100 }}</td>
+    </tr>
+  {% endfor %}
 </table>
 {% endblock %}
