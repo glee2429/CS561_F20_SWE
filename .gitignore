@@ -1,5 +1,25 @@
+# Byte-compiled / optimized / DLL
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Mac files
+.DS_Store
+
+# PyCharm
+.idea/
+
 # Instance Folder - used for run-time files
 instance/*.cfg
 instance/*.db
 instance/*.log
 instance/*.log*
+
+# Coverage output
+.coverage
+
+# Virtual Environment
+/venv/
+
+# pytest files
+.pytest_cache
