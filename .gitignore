@@ -22,4 +22,4 @@ instance/*.log*
 /venv/
 
 # pytest files
-.pytest_cache
+.pytest_cache/
