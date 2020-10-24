@@ -5,15 +5,17 @@
 {% endblock %}
 
 {% block content %}
-<h2>Add a Stock:</h2>
+<h2 class="add-stock-heading">Add a Stock:</h2>
 <form method="post">
-  <label for="stockSymbol">Stock Symbol:</label>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+  <label for="stockSymbol">Stock Symbol (<i>required</i>):</label>
   <input type="text" id="stockSymbol" name="stock_symbol" required pattern="[A-Z]{1,5}" />
   <br>
-  <label for="numberOfShares">Number of Shares:</label>
+  <label for="numberOfShares">Number of Shares (<i>required</i>):</label>
   <input type="text" id="numberOfShares" name="number_of_shares" required />
   <br>
-  <label for="purchasePrice">Purchase Price ($):</label>
+  <label for="purchasePrice">Purchase Price (<i>required</i>) ($):</label>
   <input type="text" id="purchasePrice" name="purchase_price" required />
   <br>
   <input type="submit">

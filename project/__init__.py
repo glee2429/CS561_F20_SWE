@@ -6,6 +6,10 @@ import os
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
+from flask_wtf.csrf import CSRFProtect
+from flask_login import LoginManager
+from flask_mail import Mail
+
 
 #######################
 #### Configuration ####
@@ -16,7 +20,13 @@ from flask_bcrypt import Bcrypt
 # attached to the Flask application at this point.
 database = SQLAlchemy()
 db_migration = Migrate()
-bcrypt = Bcrypt()  # NEW!!
+bcrypt = Bcrypt()
+csrf_protection = CSRFProtect()
+login = LoginManager()
+login.login_view = "users.login"
+login.refresh_view = "users.reauthenticate"
+mail = Mail()
+
 
 ######################################
 #### Application Factory Function ####
@@ -48,7 +58,18 @@ def initialize_extensions(app):
     # extension instance to bind it to the Flask application instance (app)
     database.init_app(app)
     db_migration.init_app(app, database)
-    bcrypt.init_app(app)  # NEW!!
+    bcrypt.init_app(app)
+    csrf_protection.init_app(app)
+    login.init_app(app)
+    mail.init_app(app)
+
+    # Flask-Login configuration
+    from project.models import User
+
+    @login.user_loader
+    def load_user(user_id):
+        return User.query.get(int(user_id))
+
 
 def register_blueprints(app):
     # Import the blueprints
@@ -66,7 +87,7 @@ def configure_logging(app):
     file_handler = RotatingFileHandler('instance/flask-stock-portfolio.log',
                                        maxBytes=16384,
                                        backupCount=20)
-    file_formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s [in %(filename)s:%(lineno)d]')
+    file_formatter = logging.Formatter('%(asctime)s %(levelname)s %(threadName)s-%(thread)d: %(message)s [in %(filename)s:%(lineno)d]')
     file_handler.setFormatter(file_formatter)
     file_handler.setLevel(logging.INFO)
     app.logger.addHandler(file_handler)
@@ -88,19 +109,20 @@ def register_error_pages(app):
 
 
 def register_app_callbacks(app):
-    @app.before_request
-    def app_before_request():
-        app.logger.info('Calling before_request() for the Flask application...')
-
-    @app.after_request
-    def app_after_request(response):
-        app.logger.info('Calling after_request() for the Flask application...')
-        return response
-
-    @app.teardown_request
-    def app_teardown_request(error=None):
-        app.logger.info('Calling teardown_request() for the Flask application...')
-
-    @app.teardown_appcontext
-    def app_teardown_appcontext(error=None):
-        app.logger.info('Calling teardown_appcontext() for the Flask application...')
+    # @app.before_request
+    # def app_before_request():
+    #     app.logger.info('Calling before_request() for the Flask application...')
+    #
+    # @app.after_request
+    # def app_after_request(response):
+    #     app.logger.info('Calling after_request() for the Flask application...')
+    #     return response
+    #
+    # @app.teardown_request
+    # def app_teardown_request(error=None):
+    #     app.logger.info('Calling teardown_request() for the Flask application...')
+    #
+    # @app.teardown_appcontext
+    # def app_teardown_appcontext(error=None):
+    #     app.logger.info('Calling teardown_appcontext() for the Flask application...')
+    pass

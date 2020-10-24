@@ -1,9 +1,8 @@
-###############
-### Imports ###
-###############
-
+#################
+#### imports ####
+#################
 from . import stocks_blueprint
-from flask import render_template, request, session, redirect, url_for, flash, current_app
+from flask import render_template, request, redirect, url_for, flash, current_app
 from project.models import Stock
 from project import database
 import click
@@ -13,21 +12,20 @@ import click
 #### request callbacks ####
 ###########################
 
-@stocks_blueprint.before_request
-def stocks_before_request():
-    current_app.logger.info('Calling before_request() for the stocks blueprint...')
-
-
-@stocks_blueprint.after_request
-def stocks_after_request(response):
-    current_app.logger.info('Calling after_request() for the stocks blueprint...')
-    return response
-
-
-@stocks_blueprint.teardown_request
-def stocks_teardown_request(error=None):
-    current_app.logger.info('Calling teardown_request() for the stocks blueprint...')
-
+# @stocks_blueprint.before_request
+# def stocks_before_request():
+#     current_app.logger.info('Calling before_request() for the stocks blueprint...')
+#
+#
+# @stocks_blueprint.after_request
+# def stocks_after_request(response):
+#     current_app.logger.info('Calling after_request() for the stocks blueprint...')
+#     return response
+#
+#
+# @stocks_blueprint.teardown_request
+# def stocks_teardown_request(error=None):
+#     current_app.logger.info('Calling teardown_request() for the stocks blueprint...')
 
 
 ######################
@@ -56,14 +54,16 @@ def create(symbol, number_of_shares, purchase_price):
     database.session.add(stock)
     database.session.commit()
 
-##############
-### Routes ###
-##############
+
+################
+#### routes ####
+################
 
 @stocks_blueprint.route('/')
 def index():
     current_app.logger.info('Calling the index() function.')
     return render_template('stocks/index.html')
+
 
 @stocks_blueprint.route('/add_stock', methods=['GET', 'POST'])
 def add_stock():
@@ -81,27 +81,8 @@ def add_stock():
     else:
         return render_template('stocks/add_stock.html')
 
+
 @stocks_blueprint.route('/stocks')
 def list_stocks():
     stocks = Stock.query.order_by(Stock.id).all()
     return render_template('stocks/stocks.html', stocks=stocks)
-
-
-###########################
-#### request callbacks ####
-###########################
-
-@stocks_blueprint.before_request
-def stocks_before_request():
-    current_app.logger.info('Calling before_request() for the stocks blueprint...')
-
-
-@stocks_blueprint.after_request
-def stocks_after_request(response):
-    current_app.logger.info('Calling after_request() for the stocks blueprint...')
-    return response
-
-
-@stocks_blueprint.teardown_request
-def stocks_teardown_request(error=None):
-    current_app.logger.info('Calling teardown_request() for the stocks blueprint...')
