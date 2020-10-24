@@ -2,7 +2,39 @@
 #### Project: Stock Portfolio Management App 
 #### Team: Rohan Borkar, Adam Sunderman, Saurabh Satish Desai, Ga Young Lee
 
-## How to Get Started
+## How to Restart & Debug (For returning developers)
+Given that you already downloaded the file, go to the directory and activate the virtual environment designed for development. 
+1. Activate the virtual development
+```terminal
+$ source venv/bin/activate
+```
+2. Install the Python packages specified in requirements.txt 
+(Please make sure to double-check the version and dependencies)
+```terminal
+(venv)$ pip install -r requirements.txt
+```
+
+3. Designate the script to run and specifications to run the program
+```terminal
+(venv)$ export FLASK_APP=app.py
+(venv)$ export FLASK_ENV=development
+```
+4. Create the tables (e.g., stocks, users) in the SQLite database in your virtual environment.
+```terminal
+(venv)$ flask shell
+```
+##### Start by importing the database object and then create the database table using create_all:
+```terminal
+>>> from project import database
+>>> database.create_all()
+>>> quit()
+```
+5. Once the above steps are done, run the flask app in the development server
+```terminal
+(venv)$ flask run
+```
+
+## How to Get Started (For new developers)
 1. Download the file and unzip it.
 2. Create a directory.
 
