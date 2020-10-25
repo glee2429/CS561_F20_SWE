@@ -7,7 +7,7 @@
 }
 
 body {
-  background-color: #23424A;
+  background-color: #0E6D52;
   color: white;
   font-family: sans-serif;
 }
@@ -48,9 +48,9 @@ footer {
 /* Header Styling
  ****************/
 header {
-  background-color: #136C72;
-  border: 1px solid #136C72;
-  padding: 0.75em 0;
+   background-color: #0e525e;
+   border: 1px solid #0e525e;
+   padding: 0.75em 0;
 }
 
 .nav {

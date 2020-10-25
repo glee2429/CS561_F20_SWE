@@ -77,15 +77,12 @@ def register():
                     with current_app.app_context():
                         mail.send(message)
 
-                # Send an email to the user that they have been registered
-                msg = Message(subject='Registration - Flask Stock Portfolio App',
-                              body='Thanks for registering with the Flask Stock Portfolio App!',
-                              recipients=[form.email.data])
+                # Send an email confirming the new registration
+                msg = generate_confirmation_email(form.email.data)
                 email_thread = Thread(target=send_email, args=[msg])
                 email_thread.start()
 
                 return redirect(url_for('users.login'))
-
             except IntegrityError:
                 database.session.rollback()
                 flash(f'ERROR! Email ({form.email.data}) already exists.', 'error')

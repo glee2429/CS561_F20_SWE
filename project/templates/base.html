@@ -4,7 +4,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Flask Stock Portfolio App</title>
+    <title>Stock Portfolio Management App</title>
 
     <!-- Local CSS file for styling the application-->
    <link rel="stylesheet" href="{{ url_for('static', filename='css/base_style.css') }}">
@@ -21,7 +21,7 @@
       <header>
         <nav class="nav">
           <ul class="nav-list">
-            <li class="nav-item"><a class="nav-link" href="{{ url_for('stocks.index') }}">Flask Stock Portfolio App</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('stocks.index') }}">Stock Portfolio Management App</a></li>
           </ul>
           <ul class="nav-list">
             {% if current_user.is_authenticated %}

@@ -1,8 +1,7 @@
 """
 This file (test_models.py) contains the unit tests for the models.py file.
 """
-# import pytest
-# from project.models import Stock
+
 
 def test_new_stock(new_stock):
     """
@@ -14,14 +13,16 @@ def test_new_stock(new_stock):
     assert new_stock.number_of_shares == 16
     assert new_stock.purchase_price == 40678
 
+
 def test_new_user(new_user):
     """
     GIVEN a User model
     WHEN a new User object is created
     THEN check the email is valid and hashed password does not equal the password provided
     """
-    assert new_user.email == 'leegay@oregonstate.edu'
-    assert new_user.password_hashed != 'CS561SoftwareEngineering'
+    assert new_user.email == 'patrick@email.com'
+    assert new_user.password_hashed != 'FlaskIsAwesome123'
+
 
 def test_set_password(new_user):
     """
@@ -29,6 +30,6 @@ def test_set_password(new_user):
     WHEN a new User object is created
     THEN check the password can be changed
     """
-    new_user.set_password('CS561SoftwareEngineering2020')
-    assert new_user.email == 'leegay@oregonstate.edu'
-    assert new_user.password_hashed != 'CS561SoftwareEngineering2020'
+    new_user.set_password('FlaskIsStillAwesome456')
+    assert new_user.email == 'patrick@email.com'
+    assert new_user.password_hashed != 'FlaskIsStillAwesome456'
