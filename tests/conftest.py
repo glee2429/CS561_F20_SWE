@@ -1,5 +1,8 @@
+from project import create_app
+import pytest
 from flask import current_app
 from project.models import Stock, User
+from project import database
 
 @pytest.fixture(scope='module')
 def new_stock():
@@ -8,7 +11,7 @@ def new_stock():
 
 @pytest.fixture(scope='module')
 def new_user():
-    user = User('patrick@email.com', 'FlaskIsAwesome123')
+    user = User('glee2429@gmail.com', 'CS561SoftwareEngineering')
     return user
 
 @pytest.fixture(scope='module')
@@ -30,13 +33,22 @@ def test_client():
         with flask_app.app_context():
             database.drop_all()
 
-    # Establish an application context
-    ctx = flask_app.app_context()
-    ctx.push()
+@pytest.fixture(scope='module')
+def register_default_user(test_client):
+    user = User('patrick@gmail.com', 'FlaskIsAwesome123')
+    database.session.add(user)
+    database.session.commit()
+    return user
+    
+@pytest.fixture(scope='function')
+def log_in_default_user(test_client, register_default_user):
+    # Log in the user
+    test_client.post('/users/login',
+                     data={'email': 'patrick@gmail.com',
+                           'password': 'FlaskIsAwesome123'},
+                     follow_redirects=True)
 
-    current_app.logger.info('In the test_client() fixture...')
+    yield register_default_user  # this is where the testing happens!
 
-    # Pop the application context from the stack
-    ctx.pop()
-
-    yield testing_client  # this is where the testing happens!
+    # Log out the user
+    test_client.get('/users/logout', follow_redirects=True)
