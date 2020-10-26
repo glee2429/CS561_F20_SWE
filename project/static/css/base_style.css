@@ -7,7 +7,7 @@
 }
 
 body {
-  background-color: #0E6D52;
+  background-color: #23424A;
   color: white;
   font-family: sans-serif;
 }
@@ -48,9 +48,9 @@ footer {
 /* Header Styling
  ****************/
 header {
-   background-color: #0e525e;
-   border: 1px solid #0e525e;
-   padding: 0.75em 0;
+  background-color: #136C72;
+  border: 1px solid #136C72;
+  padding: 0.75em 0;
 }
 
 .nav {
@@ -106,15 +106,15 @@ header {
 }
 
 .flash-message-error {
-  background: #FF1700;
+  background: red;
 }
 
 .flash-message-success {
-  background: #28B463;
+  background: green;
 }
 
 .flash-message-info {
-  background: #3498DB;
+  background: blue;
 }
 
 
@@ -125,12 +125,26 @@ header {
 }
 
 
+/* Error Page Styling
+ ********************/
+.errorpage-title {
+  text-align: center;
+  margin-bottom: 1em;
+}
+
+.errorpage-text {
+  text-align: center;
+  font-size: 1.15rem;
+  margin-bottom: 1em;
+}
+
+
 /* Footer Styling
  ****************/
 footer {
   margin: auto;
 }
 
-footer h3 {
+footer h4 {
   color: white;
 }
