@@ -106,15 +106,15 @@ header {
 }
 
 .flash-message-error {
-  background: #FF1700;
+  background: red;
 }
 
 .flash-message-success {
-  background: #28B463;
+  background: green;
 }
 
 .flash-message-info {
-  background: #3498DB;
+  background: blue;
 }
 
 
@@ -125,12 +125,26 @@ header {
 }
 
 
+/* Error Page Styling
+ ********************/
+.errorpage-title {
+  text-align: center;
+  margin-bottom: 1em;
+}
+
+.errorpage-text {
+  text-align: center;
+  font-size: 1.15rem;
+  margin-bottom: 1em;
+}
+
+
 /* Footer Styling
  ****************/
 footer {
   margin: auto;
 }
 
-footer h3 {
+footer h4 {
   color: white;
 }
