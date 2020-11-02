@@ -11,7 +11,7 @@ def test_get_add_stock_page(test_client):
     """
     response = test_client.get('/add_stock')
     assert response.status_code == 200
-    assert b'Flask Stock Portfolio App' in response.data
+    assert b'Stock Portfolio Management App' in response.data
     assert b'Add a Stock:' in response.data
     assert b'Stock Symbol' in response.data
     assert b'Number of Shares' in response.data

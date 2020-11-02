@@ -16,7 +16,7 @@ def test_get_registration_page(test_client):
     """
     response = test_client.get('/users/register')
     assert response.status_code == 200
-    assert b'Flask Stock Portfolio App' in response.data
+    assert b'Stock Portfolio Management App' in response.data
     assert b'User Registration' in response.data
     assert b'Email:' in response.data
     assert b'Password:' in response.data
@@ -35,7 +35,7 @@ def test_valid_registration(test_client):
                                     follow_redirects=True)
         assert response.status_code == 200
         assert b'Thanks for registering, patrick@email.com! Please check your email to confirm your email address.' in response.data
-        assert b'Flask Stock Portfolio App' in response.data
+        assert b'Stock Portfolio Management App' in response.data
         assert len(outbox) == 1
         assert outbox[0].subject == 'Registration - Flask Stock Portfolio App'
         assert outbox[0].sender == 'flaskstockportfolioapp@gmail.com'
@@ -55,7 +55,7 @@ def test_invalid_registration(test_client):
                                 follow_redirects=True)
     assert response.status_code == 200
     assert b'Thanks for registering, patrick2@email.com!' not in response.data
-    assert b'Flask Stock Portfolio App' in response.data
+    assert b'Stock Portfolio Management App' in response.data
     assert b'[This field is required.]' in response.data
 
 
@@ -75,7 +75,7 @@ def test_duplicate_registration(test_client):
                                 follow_redirects=True)
     assert response.status_code == 200
     assert b'Thanks for registering, patrick@hotmail.com!' not in response.data
-    assert b'Flask Stock Portfolio App' in response.data
+    assert b'Stock Portfolio Management App' in response.data
     assert b'ERROR! Email (patrick@hotmail.com) already exists.' in response.data
 
 
@@ -106,7 +106,7 @@ def test_valid_login_and_logout(test_client, register_default_user):
                                 follow_redirects=True)
     assert response.status_code == 200
     assert b'Thanks for logging in, patrick@gmail.com!' in response.data
-    assert b'Flask Stock Portfolio App' in response.data
+    assert b'Stock Portfolio Management App' in response.data
     assert b'Please log in to access this page.' not in response.data
 
     """
@@ -117,7 +117,7 @@ def test_valid_login_and_logout(test_client, register_default_user):
     response = test_client.get('/users/logout', follow_redirects=True)
     assert response.status_code == 200
     assert b'Goodbye!' in response.data
-    assert b'Flask Stock Portfolio App' in response.data
+    assert b'Stock Portfolio Management App' in response.data
     assert b'Please log in to access this page.' not in response.data
 
 
@@ -133,7 +133,7 @@ def test_invalid_login(test_client, register_default_user):
                                 follow_redirects=True)
     assert response.status_code == 200
     assert b'ERROR! Incorrect login credentials.' in response.data
-    assert b'Flask Stock Portfolio App' in response.data
+    assert b'Stock Portfolio Management App' in response.data
 
 
 def test_valid_login_when_logged_in_already(test_client, register_default_user):
@@ -152,7 +152,7 @@ def test_valid_login_when_logged_in_already(test_client, register_default_user):
                                 follow_redirects=True)
     assert response.status_code == 200
     assert b'Already logged in!' in response.data
-    assert b'Flask Stock Portfolio App' in response.data
+    assert b'Stock Portfolio Management App' in response.data
 
 
 def test_invalid_logout(test_client):
@@ -164,7 +164,7 @@ def test_invalid_logout(test_client):
     response = test_client.post('/users/logout', follow_redirects=True)
     assert response.status_code == 405
     assert b'Goodbye!' not in response.data
-    assert b'Flask Stock Portfolio App' in response.data
+    assert b'Stock Portfolio Management App' in response.data
     assert b'Method Not Allowed' in response.data
 
 
@@ -178,7 +178,7 @@ def test_invalid_logout_not_logged_in(test_client):
     response = test_client.get('/users/logout', follow_redirects=True)
     assert response.status_code == 200
     assert b'Goodbye!' not in response.data
-    assert b'Flask Stock Portfolio App' in response.data
+    assert b'Stock Portfolio Management App' in response.data
     assert b'Login' in response.data
     assert b'Please log in to access this page.' in response.data
 
@@ -191,7 +191,7 @@ def test_user_profile_logged_in(test_client, log_in_default_user):
     """
     response = test_client.get('/users/profile')
     assert response.status_code == 200
-    assert b'Flask Stock Portfolio App' in response.data
+    assert b'Stock Portfolio Management App' in response.data
     assert b'User Profile' in response.data
     assert b'Email: patrick@gmail.com' in response.data
     assert b'Account Statistics' in response.data
@@ -211,7 +211,7 @@ def test_user_profile_logged_in_email_confirmed(test_client, confirm_email_defau
     """
     response = test_client.get('/users/profile')
     assert response.status_code == 200
-    assert b'Flask Stock Portfolio App' in response.data
+    assert b'Stock Portfolio Management App' in response.data
     assert b'User Profile' in response.data
     assert b'Email: patrick@gmail.com' in response.data
     assert b'Account Statistics' in response.data
@@ -231,7 +231,7 @@ def test_user_profile_not_logged_in(test_client):
     """
     response = test_client.get('/users/profile', follow_redirects=True)
     assert response.status_code == 200
-    assert b'Flask Stock Portfolio App' in response.data
+    assert b'Stock Portfolio Management App' in response.data
     assert b'User Profile!' not in response.data
     assert b'Email: patrick@gmail.com' not in response.data
     assert b'Please log in to access this page.' in response.data
@@ -245,8 +245,7 @@ def test_navigation_bar_logged_in(test_client, log_in_default_user):
     """
     response = test_client.get('/')
     assert response.status_code == 200
-    assert b'Flask Stock Portfolio App' in response.data
-    assert b'Welcome to the Flask Stock Portfolio App!' in response.data
+    assert b'Stock Portfolio Management App' in response.data
     assert b'List Stocks' in response.data
     assert b'Add Stock' in response.data
     assert b'Profile' in response.data
@@ -263,8 +262,7 @@ def test_navigation_bar_not_logged_in(test_client):
     """
     response = test_client.get('/')
     assert response.status_code == 200
-    assert b'Flask Stock Portfolio App' in response.data
-    assert b'Welcome to the Flask Stock Portfolio App!' in response.data
+    assert b'Stock Portfolio Management App' in response.data
     assert b'Register' in response.data
     assert b'Login' in response.data
     assert b'List Stocks' not in response.data
@@ -284,7 +282,7 @@ def test_login_with_next_valid_path(test_client, register_default_user):
                                       'password': 'FlaskIsAwesome123'},
                                 follow_redirects=True)
     assert response.status_code == 200
-    assert b'Flask Stock Portfolio App' in response.data
+    assert b'Stock Portfolio Management App' in response.data
     assert b'User Profile' in response.data
     assert b'Email: patrick@gmail.com' in response.data
 
