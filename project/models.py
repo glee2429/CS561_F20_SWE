@@ -25,11 +25,15 @@ class Stock(database.Model):
     stock_symbol = database.Column(database.String, nullable=False)
     number_of_shares = database.Column(database.Integer, nullable=False)
     purchase_price = database.Column(database.Integer, nullable=False)
+    user_id = database.Column(database.Integer, database.ForeignKey('users.id'))
+    purchase_date = database.Column(database.DateTime)
 
-    def __init__(self, stock_symbol: str, number_of_shares: str, purchase_price: str):
+    def __init__(self, stock_symbol: str, number_of_shares: str, purchase_price: str, user_id: int, purchase_date: None):
         self.stock_symbol = stock_symbol
         self.number_of_shares = int(number_of_shares)
         self.purchase_price = int(float(purchase_price) * 100)
+        self.user_id = user_id
+        self.purchase_date = purchase_date
 
     def __repr__(self):
         return f'{self.stock_symbol} - {self.number_of_shares} shares purchased at ${self.purchase_price / 100}'
@@ -58,6 +62,7 @@ class User(database.Model):
     email_confirmation_sent_on = database.Column(database.DateTime)
     email_confirmed = database.Column(database.Boolean, default=False)
     email_confirmed_on = database.Column(database.DateTime)
+    stocks = database.relationship('Stock', backref='user', lazy='dynamic')
 
     def __init__(self, email: str, password_plaintext: str):
         """Create a new User object

@@ -5,18 +5,15 @@ from project.models import Stock, User
 from project import database
 from datetime import datetime
 
-
 @pytest.fixture(scope='module')
 def new_stock():
-    stock = Stock('AAPL', '16', '406.78')
+    stock = Stock('AAPL', '16', '406.78', 17, datetime(2020, 7, 18))
     return stock
-
 
 @pytest.fixture(scope='module')
 def new_user(test_client_with_app_context):
     user = User('patrick@email.com', 'FlaskIsAwesome123')
     return user
-
 
 @pytest.fixture(scope='module')
 def register_default_user(test_client):
@@ -25,20 +22,15 @@ def register_default_user(test_client):
     database.session.commit()
     return user
 
-
 @pytest.fixture(scope='function')
 def log_in_default_user(test_client, register_default_user):
     # Log in the user
     test_client.post('/users/login',
                      data={'email': 'patrick@gmail.com',
-                           'password': 'FlaskIsAwesome123'},
-                     follow_redirects=True)
-
-    yield register_default_user  # this is where the testing happens!
-
+                           'password': 'FlaskIsAwesome123'})
+    yield
     # Log out the user
     test_client.get('/users/logout', follow_redirects=True)
-
 
 @pytest.fixture(scope='function')
 def confirm_email_default_user(test_client, log_in_default_user):
@@ -58,10 +50,10 @@ def confirm_email_default_user(test_client, log_in_default_user):
     database.session.add(user)
     database.session.commit()
 
-
 @pytest.fixture(scope='module')
 def test_client():
     flask_app = create_app()
+    flask_app.app_context().push()
     flask_app.config.from_object('config.TestingConfig')
     flask_app.extensions['mail'].suppress = True
 
@@ -79,7 +71,6 @@ def test_client():
         with flask_app.app_context():
             database.drop_all()
 
-
 @pytest.fixture(scope='module')
 def test_client_with_app_context():
     flask_app = create_app()
@@ -92,7 +83,6 @@ def test_client_with_app_context():
         with flask_app.app_context():
             yield testing_client  # this is where the testing happens!
 
-
 @pytest.fixture(scope='function')
 def afterwards_reset_default_user_password():
     yield  # this is where the testing happens!
@@ -103,3 +93,19 @@ def afterwards_reset_default_user_password():
     user.set_password('FlaskIsAwesome123')
     database.session.add(user)
     database.session.commit()
+
+@pytest.fixture(scope='function')
+def add_stocks_for_default_user(test_client, log_in_default_user):
+    test_client.post('/add_stock', data={'stock_symbol': 'SAM',
+                                        'number_of_shares': '27',
+                                        'purchase_price': '301.23',
+                                        'purchase_date': '2020-07-01'})
+    test_client.post('/add_stock', data={'stock_symbol': 'COST',
+                                        'number_of_shares': '76',
+                                        'purchase_price': '14.67',
+                                        'purchase_date': '2019-05-26'})
+    test_client.post('/add_stock', data={'stock_symbol': 'TWTR',
+                                        'number_of_shares': '146',
+                                        'purchase_price': '34.56',
+                                        'purchase_date': '2020-02-03'})
+    return
