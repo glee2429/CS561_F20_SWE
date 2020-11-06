@@ -67,7 +67,7 @@ def test_get_add_stock_page_not_logged_in(test_client):
     assert b'Please log in to access this page.' in response.data
 
 
-def test_post_add_stock_page(test_client, log_in_default_user):
+def test_post_add_stock_page(test_client, log_in_default_user, mock_requests_get_success):
     """
     GIVEN a Flask application configured for testing
     WHEN the '/add_stock' page is posted to (POST) and the user is logged in
@@ -108,7 +108,7 @@ def test_post_add_stock_page_not_logged_in(test_client):
     assert b'Please log in to access this page.' in response.data
 
 
-def test_get_stock_list_logged_in(test_client, add_stocks_for_default_user):
+def test_get_stock_list_logged_in(test_client, add_stocks_for_default_user, mock_requests_get_success):
     """
     GIVEN a Flask application configured for testing
     WHEN the '/stocks' page is requested (GET) and the user is logged in

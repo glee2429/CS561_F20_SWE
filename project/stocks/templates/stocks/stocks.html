@@ -13,8 +13,10 @@
   <tr>
     <th>Stock Symbol</th>
     <th>Number of Shares</th>
-    <th>Share Price</th>
+    <th>Purchase Price</th>
     <th>Purchase Date</th>
+    <th>Current Share Price</th>
+    <th>Stock Position Value</th>
   </tr>
 
   <!-- Table Elements (Rows) -->
@@ -24,7 +26,18 @@
       <td>{{ stock.number_of_shares }}</td>
       <td>${{ stock.purchase_price / 100 }}</td>
       <td>{{ stock.purchase_date.strftime("%Y-%m-%d") }}</td>
+      <td>${{ stock.current_price }}</td>
+      <td>${{ stock.position_value / 100 }}</td>
     </tr>
   {% endfor %}
+
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td><b>TOTAL VALUE</b></td>
+    <td><b>${{ value }}</b></td>
+  </tr>
 </table>
 {% endblock %}

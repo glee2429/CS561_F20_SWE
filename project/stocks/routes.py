@@ -91,4 +91,11 @@ def add_stock():
 @login_required
 def list_stocks():
     stocks = Stock.query.order_by(Stock.id).filter_by(user_id=current_user.id).all()
-    return render_template('stocks/stocks.html', stocks=stocks)
+
+    current_account_value = 0.0
+    for stock in stocks:
+        stock.get_stock_data()
+        database.session.add(stock)
+        current_account_value += stock.get_stock_position_value()
+    database.session.commit()
+    return render_template('stocks/stocks.html', stocks=stocks, value=round(current_account_value, 2))
