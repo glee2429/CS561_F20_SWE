@@ -1,7 +1,7 @@
 from project import database, bcrypt
 from flask import current_app
-from datetime import datetime
-
+from datetime import datetime, timedelta
+import requests
 
 class Stock(database.Model):
     """
@@ -27,16 +27,68 @@ class Stock(database.Model):
     purchase_price = database.Column(database.Integer, nullable=False)
     user_id = database.Column(database.Integer, database.ForeignKey('users.id'))
     purchase_date = database.Column(database.DateTime)
+    current_price = database.Column(database.Integer)
+    current_price_date = database.Column(database.DateTime)
+    position_value = database.Column(database.Integer)
 
-    def __init__(self, stock_symbol: str, number_of_shares: str, purchase_price: str, user_id: int, purchase_date: None):
+    def __init__(self, stock_symbol: str, number_of_shares: str, purchase_price: str, 
+                user_id: int, purchase_date: None):
         self.stock_symbol = stock_symbol
         self.number_of_shares = int(number_of_shares)
         self.purchase_price = int(float(purchase_price) * 100)
         self.user_id = user_id
         self.purchase_date = purchase_date
+        self.current_price = 0
+        self.current_price_date = None
+        self.position_value = 0
 
     def __repr__(self):
         return f'{self.stock_symbol} - {self.number_of_shares} shares purchased at ${self.purchase_price / 100}'
+
+    def create_alpha_vantage_get_url_daily_compact(self):
+        return 'https://www.alphavantage.co/query?function={}&symbol={}&outputsize={}&apikey={}'.format(
+            'TIME_SERIES_DAILY_ADJUSTED',
+            self.stock_symbol,
+            'compact',
+            current_app.config['ALPHA_VANTAGE_API_KEY']
+        )
+
+    def get_stock_data(self):
+        if self.current_price_date is None or self.current_price_date.date() != datetime.now().date():
+            url = self.create_alpha_vantage_get_url_daily_compact()
+
+            try:
+                r = requests.get(url)
+            except requests.exceptions.ConnectionError:
+                current_app.logger.error(f'Error! Network problem preventing retrieving the stock data ({ self.stock_symbol })!')
+
+            # Status code returned from Alpha Vantage needs to be 200 (OK) to process stock data
+            if r.status_code != 200:
+                current_app.logger.warning(f'Error! Received unexpected status code ({ r.status_code }) '
+                                           f'when retrieving stock data ({ self.stock_symbol })!')
+                return
+
+            daily_data = r.json()
+
+            # The key of 'Time Series (Daily)' needs to be present in order to process the stock data
+            # Typically, this key will not be present if the API rate limit has been exceeded.
+            if 'Time Series (Daily)' not in daily_data:
+                current_app.logger.warning(f'Could not find Time Series (Daily) key when retrieving '
+                                           f'the stock data ({ self.stock_symbol })!')
+                return
+
+            for element in daily_data['Time Series (Daily)']:
+                current_price = float(daily_data['Time Series (Daily)'][element]['4. close'])
+                self.current_price = int(float(current_price) * 100)
+                self.current_price_date = datetime.now()
+                self.position_value = self.current_price * self.number_of_shares
+                break
+            current_app.logger.debug(f'Retrieved current price {self.current_price / 100} '
+                                     f'for the stock data ({ self.stock_symbol })!')
+
+    def get_stock_position_value(self) -> float:
+        return float(self.position_value / 100)
+
 
 
 class User(database.Model):

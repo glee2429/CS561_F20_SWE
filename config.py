@@ -27,6 +27,8 @@ class Config(object):
     MAIL_PASSWORD = os.getenv('MAIL_PASSWORD', default='')
     MAIL_DEFAULT_SENDER = os.getenv('MAIL_USERNAME', default='')
 
+    ALPHA_VANTAGE_API_KEY = os.getenv('ALPHA_VANTAGE_API_KEY', default='')
+
 
 class ProductionConfig(Config):
     FLASK_ENV = 'production'
