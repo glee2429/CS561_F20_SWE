@@ -2,7 +2,7 @@
 #### imports ####
 #################
 from . import stocks_blueprint
-from flask import render_template, request, redirect, url_for, flash, current_app
+from flask import render_template, request, redirect, url_for, flash, current_app, abort
 from flask_login import login_required, current_user
 from project.models import Stock
 from project import database
@@ -99,3 +99,15 @@ def list_stocks():
         current_account_value += stock.get_stock_position_value()
     database.session.commit()
     return render_template('stocks/stocks.html', stocks=stocks, value=round(current_account_value, 2))
+
+
+@stocks_blueprint.route('/stocks/<id>')
+@login_required
+def stock_details(id):
+    stock = Stock.query.filter_by(id=id).first_or_404()
+
+    if stock.user_id != current_user.id:
+        abort(403)
+
+    title, labels, values = stock.get_weekly_stock_data()
+    return render_template('stocks/stock_details.html', stock=stock, title=title, labels=labels, values=values)

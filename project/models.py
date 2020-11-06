@@ -3,6 +3,7 @@ from flask import current_app
 from datetime import datetime, timedelta
 import requests
 
+
 class Stock(database.Model):
     """
     Class that represents a purchased stock in a portfolio
@@ -11,9 +12,14 @@ class Stock(database.Model):
         stock symbol (type: string)
         number of shares (type: integer)
         purchase price (type: integer)
+        primary key of User that owns the stock (type: integer)
+        purchase date (type: datetime)
+        current price (type: integer)
+        date when current price was retrieved from the Alpha Vantage API (type: datetime)
+        position value = current price * number of shares (type: integer)
 
     Note: Due to a limitation in the data types supported by SQLite, the
-          purchase price is stored as an integer:
+          purchase price, current price, and position value are stored as integers:
               $24.10 -> 2410
               $100.00 -> 10000
               $87.65 -> 8765
@@ -31,8 +37,8 @@ class Stock(database.Model):
     current_price_date = database.Column(database.DateTime)
     position_value = database.Column(database.Integer)
 
-    def __init__(self, stock_symbol: str, number_of_shares: str, purchase_price: str, 
-                user_id: int, purchase_date: None):
+    def __init__(self, stock_symbol: str, number_of_shares: str, purchase_price: str,
+                 user_id: int, purchase_date=None):
         self.stock_symbol = stock_symbol
         self.number_of_shares = int(number_of_shares)
         self.purchase_price = int(float(purchase_price) * 100)
@@ -89,6 +95,49 @@ class Stock(database.Model):
     def get_stock_position_value(self) -> float:
         return float(self.position_value / 100)
 
+    def create_alpha_vantage_get_url_weekly(self):
+        return 'https://www.alphavantage.co/query?function={}&symbol={}&apikey={}'.format(
+            'TIME_SERIES_WEEKLY_ADJUSTED',
+            self.stock_symbol,
+            current_app.config['ALPHA_VANTAGE_API_KEY']
+        )
+
+    def get_weekly_stock_data(self):
+        title = ''
+        labels = []
+        values = []
+        url = self.create_alpha_vantage_get_url_weekly()
+
+        try:
+            r = requests.get(url)
+        except requests.exceptions.ConnectionError:
+            current_app.logger.info(f"Error! Network problem preventing retrieving the weekly stock data ({ self.stock_symbol })!")
+
+        if r.status_code == 200:
+            weekly_data = r.json()
+            title = f'Weekly Prices ({self.stock_symbol})'
+
+            # Determine the start date as either:
+            #   - If the start date is less than 12 weeks ago, then use the date from 12 weeks ago
+            #   - Otherwise, use the purchase date
+            start_date = self.purchase_date
+            if (datetime.now() - self.purchase_date) < timedelta(weeks=12):
+                start_date = datetime.now() - timedelta(weeks=12)
+
+            for element in weekly_data['Weekly Adjusted Time Series']:
+                date = datetime.fromisoformat(element)
+                if date.date() > start_date.date():
+                    labels.append(date)
+                    values.append(weekly_data['Weekly Adjusted Time Series'][element]['4. close'])
+
+            # Reverse the elements as the data from Alpha Vantage is read in latest to oldest
+            labels.reverse()
+            values.reverse()
+        else:
+            current_app.logger.info(
+                f"Error! Received unexpected status code ({ r.status_code }) when retrieving weekly stock data ({ self.stock_symbol })!")
+
+        return title, labels, values
 
 
 class User(database.Model):
