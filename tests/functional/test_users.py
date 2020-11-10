@@ -16,13 +16,13 @@ def test_get_registration_page(test_client):
     """
     response = test_client.get('/users/register')
     assert response.status_code == 200
-    assert b'Flask Stock Portfolio App' in response.data
+    assert b'Stock Portfolio Management App' in response.data
     assert b'User Registration' in response.data
     assert b'Email:' in response.data
     assert b'Password:' in response.data
 
 
-def test_valid_registration(test_client):
+def test_valid_registration(test_client, init_database):
     """
     GIVEN a Flask application configured for testing
     WHEN the '/users/register' page is posted to (POST) with valid data
@@ -35,15 +35,15 @@ def test_valid_registration(test_client):
                                     follow_redirects=True)
         assert response.status_code == 200
         assert b'Thanks for registering, patrick@email.com! Please check your email to confirm your email address.' in response.data
-        assert b'Flask Stock Portfolio App' in response.data
+        assert b'Stock Portfolio Management App' in response.data
         assert len(outbox) == 1
-        assert outbox[0].subject == 'Registration - Flask Stock Portfolio App'
-        assert outbox[0].sender == 'flaskstockportfolioapp@gmail.com'
+        assert outbox[0].subject == 'Flask Stock Portfolio App- Confirm Your Email Address'
+        assert outbox[0].sender == 'flaskstockportfolioapp@gmail.com@gmail.com'
         assert outbox[0].recipients[0] == 'patrick@email.com'
         assert 'http://localhost/users/confirm/' in outbox[0].html
 
 
-def test_invalid_registration(test_client):
+def test_invalid_registration(test_client, init_database):
     """
     GIVEN a Flask application configured for testing
     WHEN the '/users/register' page is posted to (POST) with invalid data (missing password)
@@ -55,11 +55,11 @@ def test_invalid_registration(test_client):
                                 follow_redirects=True)
     assert response.status_code == 200
     assert b'Thanks for registering, patrick2@email.com!' not in response.data
-    assert b'Flask Stock Portfolio App' in response.data
+    assert b'Stock Portfolio Management App' in response.data
     assert b'[This field is required.]' in response.data
 
 
-def test_duplicate_registration(test_client):
+def test_duplicate_registration(test_client, init_database):
     """
     GIVEN a Flask application configured for testing
     WHEN the '/users/register' page is posted to (POST) with the email address for an existing user
@@ -75,7 +75,7 @@ def test_duplicate_registration(test_client):
                                 follow_redirects=True)
     assert response.status_code == 200
     assert b'Thanks for registering, patrick@hotmail.com!' not in response.data
-    assert b'Flask Stock Portfolio App' in response.data
+    assert b'Stock Portfolio Management App' in response.data
     assert b'ERROR! Email (patrick@hotmail.com) already exists.' in response.data
 
 
@@ -106,7 +106,7 @@ def test_valid_login_and_logout(test_client, register_default_user):
                                 follow_redirects=True)
     assert response.status_code == 200
     assert b'Thanks for logging in, patrick@gmail.com!' in response.data
-    assert b'Flask Stock Portfolio App' in response.data
+    assert b'Stock Portfolio Management App' in response.data
     assert b'Please log in to access this page.' not in response.data
 
     """
@@ -117,7 +117,7 @@ def test_valid_login_and_logout(test_client, register_default_user):
     response = test_client.get('/users/logout', follow_redirects=True)
     assert response.status_code == 200
     assert b'Goodbye!' in response.data
-    assert b'Flask Stock Portfolio App' in response.data
+    assert b'Stock Portfolio Management App' in response.data
     assert b'Please log in to access this page.' not in response.data
 
 
@@ -133,7 +133,7 @@ def test_invalid_login(test_client, register_default_user):
                                 follow_redirects=True)
     assert response.status_code == 200
     assert b'ERROR! Incorrect login credentials.' in response.data
-    assert b'Flask Stock Portfolio App' in response.data
+    assert b'Stock Portfolio Management App' in response.data
 
 
 def test_valid_login_when_logged_in_already(test_client, register_default_user):
@@ -152,10 +152,10 @@ def test_valid_login_when_logged_in_already(test_client, register_default_user):
                                 follow_redirects=True)
     assert response.status_code == 200
     assert b'Already logged in!' in response.data
-    assert b'Flask Stock Portfolio App' in response.data
+    assert b'Stock Portfolio Management App' in response.data
 
 
-def test_invalid_logout(test_client):
+def test_invalid_logout(test_client, init_database):
     """
     GIVEN a Flask application
     WHEN the '/users/logout' page is posted to (POST)
@@ -164,11 +164,11 @@ def test_invalid_logout(test_client):
     response = test_client.post('/users/logout', follow_redirects=True)
     assert response.status_code == 405
     assert b'Goodbye!' not in response.data
-    assert b'Flask Stock Portfolio App' in response.data
+    assert b'Stock Portfolio Management App' in response.data
     assert b'Method Not Allowed' in response.data
 
 
-def test_invalid_logout_not_logged_in(test_client):
+def test_invalid_logout_not_logged_in(test_client, init_database):
     """
     GIVEN a Flask application
     WHEN the '/users/logout' page is requested (GET) when the user is not logged in
@@ -178,7 +178,7 @@ def test_invalid_logout_not_logged_in(test_client):
     response = test_client.get('/users/logout', follow_redirects=True)
     assert response.status_code == 200
     assert b'Goodbye!' not in response.data
-    assert b'Flask Stock Portfolio App' in response.data
+    assert b'Stock Portfolio Management App' in response.data
     assert b'Login' in response.data
     assert b'Please log in to access this page.' in response.data
 
@@ -191,7 +191,7 @@ def test_user_profile_logged_in(test_client, log_in_default_user):
     """
     response = test_client.get('/users/profile')
     assert response.status_code == 200
-    assert b'Flask Stock Portfolio App' in response.data
+    assert b'Stock Portfolio Management App' in response.data
     assert b'User Profile' in response.data
     assert b'Email: patrick@gmail.com' in response.data
     assert b'Account Statistics' in response.data
@@ -211,7 +211,7 @@ def test_user_profile_logged_in_email_confirmed(test_client, confirm_email_defau
     """
     response = test_client.get('/users/profile')
     assert response.status_code == 200
-    assert b'Flask Stock Portfolio App' in response.data
+    assert b'Stock Portfolio Management App' in response.data
     assert b'User Profile' in response.data
     assert b'Email: patrick@gmail.com' in response.data
     assert b'Account Statistics' in response.data
@@ -231,7 +231,7 @@ def test_user_profile_not_logged_in(test_client):
     """
     response = test_client.get('/users/profile', follow_redirects=True)
     assert response.status_code == 200
-    assert b'Flask Stock Portfolio App' in response.data
+    assert b'Stock Portfolio Management App' in response.data
     assert b'User Profile!' not in response.data
     assert b'Email: patrick@gmail.com' not in response.data
     assert b'Please log in to access this page.' in response.data
@@ -245,8 +245,8 @@ def test_navigation_bar_logged_in(test_client, log_in_default_user):
     """
     response = test_client.get('/')
     assert response.status_code == 200
-    assert b'Flask Stock Portfolio App' in response.data
-    assert b'Welcome to the Flask Stock Portfolio App!' in response.data
+    assert b'Stock Portfolio Management App' in response.data
+    assert b'Welcome to the Stock Portfolio Management App!' in response.data
     assert b'List Stocks' in response.data
     assert b'Add Stock' in response.data
     assert b'Profile' in response.data
@@ -263,8 +263,8 @@ def test_navigation_bar_not_logged_in(test_client):
     """
     response = test_client.get('/')
     assert response.status_code == 200
-    assert b'Flask Stock Portfolio App' in response.data
-    assert b'Welcome to the Flask Stock Portfolio App!' in response.data
+    assert b'Stock Portfolio Management App' in response.data
+    assert b'Welcome to the Stock Portfolio Management App!' in response.data
     assert b'Register' in response.data
     assert b'Login' in response.data
     assert b'List Stocks' not in response.data
@@ -284,7 +284,7 @@ def test_login_with_next_valid_path(test_client, register_default_user):
                                       'password': 'FlaskIsAwesome123'},
                                 follow_redirects=True)
     assert response.status_code == 200
-    assert b'Flask Stock Portfolio App' in response.data
+    assert b'Stock Portfolio Management App' in response.data
     assert b'User Profile' in response.data
     assert b'Email: patrick@gmail.com' in response.data
 
@@ -307,7 +307,7 @@ def test_login_with_next_invalid_path(test_client, register_default_user):
     assert b'Email: patrick@gmail.com' not in response.data
 
 
-def test_confirm_email_valid(test_client):
+def test_confirm_email_valid(test_client, init_database):
     """
     GIVEN a Flask application
     WHEN the '/users/confirm/<token>' page is requested (GET) with valid data
@@ -324,7 +324,7 @@ def test_confirm_email_valid(test_client):
     assert user.email_confirmed
 
 
-def test_confirm_email_already_confirmed(test_client):
+def test_confirm_email_already_confirmed(test_client, init_database):
     """
     GIVEN a Flask application
     WHEN the '/users/confirm/<token>' page is requested (GET) with valid data
@@ -346,7 +346,7 @@ def test_confirm_email_already_confirmed(test_client):
     assert user.email_confirmed
 
 
-def test_confirm_email_invalid(test_client):
+def test_confirm_email_invalid(test_client, init_database):
     """
     GIVEN a Flask application
     WHEN the '/users/confirm/<token>' page is is requested (GET) with invalid data
@@ -383,15 +383,15 @@ def test_post_password_reset_via_email_page_valid(test_client, confirm_email_def
         assert response.status_code == 200
         assert b'Please check your email for a password reset link.' in response.data
         assert len(outbox) == 1
-        assert outbox[0].subject == 'Flask Stock Portfolio App - Password Reset Requested'
-        assert outbox[0].sender == 'cs561stockportfoliomanagement@gmail.com'
+        assert outbox[0].subject == 'Stock Portfolio Management App - Password Reset Requested'
+        assert outbox[0].sender == 'flaskstockportfolioapp@gmail.com'
         assert outbox[0].recipients[0] == 'patrick@gmail.com'
         assert 'Questions? Comments?' in outbox[0].html
-        assert 'cs561stockportfoliomanagement@gmail.com' in outbox[0].html
+        assert 'flaskstockportfolioapp@gmail.com' in outbox[0].html
         assert 'http://localhost/users/password_reset_via_token/' in outbox[0].html
 
 
-def test_post_password_reset_via_email_page_invalid(test_client):
+def test_post_password_reset_via_email_page_invalid(test_client, init_database):
     """
     GIVEN a Flask application
     WHEN the '/users/password_reset_via_email' page is posted to (POST) with an invalid email address
@@ -406,7 +406,7 @@ def test_post_password_reset_via_email_page_invalid(test_client):
         assert b'Error! Invalid email address!' in response.data
 
 
-def test_post_password_reset_via_email_page_not_confirmed(test_client, log_in_default_user):
+def test_post_password_reset_via_email_page_not_confirmed(test_client, init_database, log_in_default_user):
     """
     GIVEN a Flask application
     WHEN the '/users/password_reset_via_email' page is posted to (POST) with a email address that has not been confirmed
@@ -421,7 +421,7 @@ def test_post_password_reset_via_email_page_not_confirmed(test_client, log_in_de
         assert b'Your email address must be confirmed before attempting a password reset.' in response.data
 
 
-def test_get_password_reset_valid_token(test_client):
+def test_get_password_reset_valid_token(test_client, init_database):
     """
     GIVEN a Flask application
     WHEN the '/users/password_reset_via_email/<token>' page is requested (GET) with a valid token
@@ -437,7 +437,7 @@ def test_get_password_reset_valid_token(test_client):
     assert b'Submit' in response.data
 
 
-def test_get_password_reset_invalid_token(test_client):
+def test_get_password_reset_invalid_token(test_client, init_database):
     """
     GIVEN a Flask application
     WHEN the '/users/password_reset_via_email/<token>' page is requested (GET) with an invalid token
@@ -451,7 +451,7 @@ def test_get_password_reset_invalid_token(test_client):
     assert b'The password reset link is invalid or has expired.' in response.data
 
 
-def test_post_password_reset_valid_token(test_client, afterwards_reset_default_user_password):
+def test_post_password_reset_valid_token(test_client, init_database, afterwards_reset_default_user_password):
     """
     GIVEN a Flask application
     WHEN the '/users/password_reset_via_email/<token>' page is posted to (POST) with a valid token
@@ -467,7 +467,7 @@ def test_post_password_reset_valid_token(test_client, afterwards_reset_default_u
     assert b'Your password has been updated!' in response.data
 
 
-def test_post_password_reset_invalid_token(test_client):
+def test_post_password_reset_invalid_token(test_client, init_database):
     """
     GIVEN a Flask application
     WHEN the '/users/password_reset_via_email/<token>' page is posted to (POST) with a invalid token
@@ -567,12 +567,12 @@ def test_get_resend_email_confirmation_logged_in(test_client, log_in_default_use
         assert b'Email sent to confirm your email address.  Please check your email!' in response.data
         assert len(outbox) == 1
         assert outbox[0].subject == 'Flask Stock Portfolio App - Confirm Your Email Address'
-        assert outbox[0].sender == 'cs561stockportfoliomanagement@gmail.com'
+        assert outbox[0].sender == 'flaskstockportfolioapp@gmail.com'
         assert outbox[0].recipients[0] == 'patrick@gmail.com'
         assert 'http://localhost/users/confirm/' in outbox[0].html
 
 
-def test_get_resend_email_confirmation_not_logged_in(test_client):
+def test_get_resend_email_confirmation_not_logged_in(test_client, init_database):
     """
     GIVEN a Flask application when the user is not logged in
     WHEN the '/users/resend_email_confirmation' page is retrieved (GET)
