@@ -41,7 +41,10 @@ class Stock(database.Model):
                  user_id: int, purchase_date=None):
         self.stock_symbol = stock_symbol
         self.number_of_shares = int(number_of_shares)
-        self.purchase_price = int(float(purchase_price) * 100)
+        try:
+            self.purchase_price = get_latest_price()
+        except:
+            self.purchase_price = int(float(purchase_price) * 100)
         self.user_id = user_id
         self.purchase_date = purchase_date
         self.current_price = 0
@@ -51,15 +54,49 @@ class Stock(database.Model):
     def __repr__(self):
         return f'{self.stock_symbol} - {self.number_of_shares} shares purchased at ${self.purchase_price / 100}'
 
+    # For initialization. Just returns latest price
+    def get_latest_price(self):
+
+        if self.current_price_date is None or self.current_price_date.date() != datetime.now().date():
+            url = self.create_alpha_vantage_get_url_daily_compact()
+
+            try:
+                r = requests.get(url)
+            except requests.exceptions.ConnectionError:
+                current_app.logger.error(f'Error! Network problem preventing retrieving the stock data ({ self.stock_symbol })!')
+
+            # Status code returned from Alpha Vantage needs to be 200 (OK) to process stock data
+            if r.status_code != 200:
+                current_app.logger.warning(f'Error! Received unexpected status code ({ r.status_code }) '
+                                           f'when retrieving stock data ({ self.stock_symbol })!')
+                return
+
+            daily_data = r.json()
+
+            # The key of 'Time Series (Daily)' needs to be present in order to process the stock data
+            # Typically, this key will not be present if the API rate limit has been exceeded.
+            if 'Time Series (Daily)' not in daily_data:
+                current_app.logger.warning(f'Could not find Time Series (Daily) key when retrieving '
+                                           f'the stock data ({ self.stock_symbol })!')
+                return
+
+            # Grab just the stock info (not the other stuff that comes with it)
+            latest = r.json()['Time Series (Daily)']
+            # The first element is the latest data, grab the '4. close' from it
+            print('purchase at ' + str(latest[list(latest)[0]]['4. close']))
+            return latest[list(latest)[0]]['4. close']
+
     def create_alpha_vantage_get_url_daily_compact(self):
         return 'https://www.alphavantage.co/query?function={}&symbol={}&outputsize={}&apikey={}'.format(
             'TIME_SERIES_DAILY_ADJUSTED',
             self.stock_symbol,
             'compact',
-            current_app.config['ALPHA_VANTAGE_API_KEY']
+            'Y04QCZE7OVDMHQVG'
         )
 
+    # Get daily time series data of a stock
     def get_stock_data(self):
+
         if self.current_price_date is None or self.current_price_date.date() != datetime.now().date():
             url = self.create_alpha_vantage_get_url_daily_compact()
 
@@ -96,20 +133,22 @@ class Stock(database.Model):
         return float(self.position_value / 100)
 
     def create_alpha_vantage_get_url_weekly(self):
-        return 'https://www.alphavantage.co/query?function={}&symbol={}&apikey={}'.format(
-            'TIME_SERIES_WEEKLY_ADJUSTED',
+        return 'https://www.alphavantage.co/query?function={}&symbol={}&outputsize={}&apikey={}'.format(
+            'TIME_SERIES_WEEKLY',
             self.stock_symbol,
-            current_app.config['ALPHA_VANTAGE_API_KEY']
+            'compact',
+            'Y04QCZE7OVDMHQVG'
         )
 
     def get_weekly_stock_data(self):
         title = ''
         labels = []
         values = []
-        url = self.create_alpha_vantage_get_url_weekly()
+        url0 = self.create_alpha_vantage_get_url_weekly()
+        url1 = 'https://www.alphavantage.co/query'
 
         try:
-            r = requests.get(url)
+            r = requests.get(url0, url1)
         except requests.exceptions.ConnectionError:
             current_app.logger.info(f"Error! Network problem preventing retrieving the weekly stock data ({ self.stock_symbol })!")
 
