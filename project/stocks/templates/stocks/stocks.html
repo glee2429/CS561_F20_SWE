@@ -7,6 +7,7 @@
 {% block content %}
 <h2>List of Stocks:</h2>
 <br>
+<h3>Current Funds: {{ current_user.current_funds / 100 }}</h3>
 
 <table id="stock-table">
   <!-- Table Header Row -->
@@ -17,21 +18,32 @@
     <th>Purchase Date</th>
     <th>Current Share Price</th>
     <th>Stock Position Value</th>
+    <th>Sell Shares</th>
   </tr>
 
   <!-- Table Elements (Rows) -->
   {% for stock in stocks %}
-    <tr>
-      <td>{{ stock.stock_symbol }}</td>
-      <td>{{ stock.number_of_shares }}</td>
-      <td>${{ stock.purchase_price / 100 }}</td>
-      <td>{{ stock.purchase_date.strftime("%Y-%m-%d") }}</td>
-      <td>${{ stock.current_price }}</td>
-      <td>${{ stock.position_value / 100 }}</td>
-    </tr>
+    {% if stock.number_of_shares > 0 %}
+      <tr>
+        <td>{{ stock.stock_symbol }}</td>
+        <td>{{ stock.number_of_shares }}</td>
+        <td>${{ stock.purchase_price / 100 }}</td>
+        <td>{{ stock.purchase_date.strftime("%Y-%m-%d") }}</td>
+        <td>${{ stock.current_price / 100}}</td>
+        <td>${{ stock.position_value / 100 }}</td>
+        <td>
+          <form class="sell_stock_form" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <input type="hidden" name="sell_stock_id" value="{{ stock.id }}"/>
+            <input type="submit" name="sell_stock_submit" value="Sell">
+          </form>
+        </td>
+      </tr>
+    {% endif %}
   {% endfor %}
 
   <tr>
+    <td></td>
     <td></td>
     <td></td>
     <td></td>

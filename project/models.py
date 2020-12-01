@@ -35,6 +35,8 @@ class Stock(database.Model):
     purchase_date = database.Column(database.DateTime)
     current_price = database.Column(database.Integer)
     current_price_date = database.Column(database.DateTime)
+    sold = database.Column(database.Boolean)
+    sell_price = database.Column(database.Integer)
     position_value = database.Column(database.Integer)
 
     def __init__(self, stock_symbol: str, number_of_shares: str, purchase_price: str,
@@ -49,6 +51,8 @@ class Stock(database.Model):
         self.purchase_date = purchase_date
         self.current_price = 0
         self.current_price_date = None
+        self.sold = False
+        self.sell_price = 0
         self.position_value = 0
 
     def __repr__(self):
@@ -203,6 +207,7 @@ class User(database.Model):
     email_confirmed = database.Column(database.Boolean, default=False)
     email_confirmed_on = database.Column(database.DateTime)
     stocks = database.relationship('Stock', backref='user', lazy='dynamic')
+    current_funds = database.Column(database.Integer)
 
     def __init__(self, email: str, password_plaintext: str):
         """Create a new User object
@@ -217,6 +222,7 @@ class User(database.Model):
         self.email_confirmation_sent_on = datetime.now()
         self.email_confirmed = False
         self.email_confirmed_on = None
+        self.current_funds = 1000000
 
     def is_password_correct(self, password_plaintext: str):
         return bcrypt.check_password_hash(self.password_hashed, password_plaintext)
@@ -224,6 +230,15 @@ class User(database.Model):
     def set_password(self, password_plaintext):
         self.password_hashed = bcrypt.generate_password_hash(
             password_plaintext, current_app.config.get('BCRYPT_LOG_ROUNDS')).decode('utf-8')
+    
+    def add_funds(self, value, amount):
+        self.current_funds = self.current_funds + (int(float(value)) * 100 * int(amount))
+
+    def subtract_funds(self, value, amount):
+        self.current_funds = self.current_funds - (int(float(value)) * 100 * int(amount))
+
+    def has_funds(self, value, amount):
+        return self.current_funds >= (int(float(value)) * 100 * int(amount))
 
     def __repr__(self):
         return f'<User: {self.email}>'
