@@ -17,3 +17,9 @@ th {
   background-color: #4CAF50;
   color: white;
 }
+
+table a {
+  text-decoration: underline;
+  color: white;
+  font-weight: 900;
+}
