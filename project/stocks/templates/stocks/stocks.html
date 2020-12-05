@@ -23,7 +23,6 @@
 
   <!-- Table Elements (Rows) -->
   {% for stock in stocks %}
-<<<<<<< HEAD
     <tr>
       <td><a href="{{ url_for('stocks.stock_details', id=stock.id) }}">{{ stock.stock_symbol }}</a></td>
       <td>{{ stock.number_of_shares }}</td>
@@ -32,7 +31,6 @@
       <td>${{ stock.current_price / 100 }}</td>
       <td>${{ stock.position_value / 100 }}</td>
     </tr>
-=======
     {% if stock.number_of_shares > 0 %}
       <tr>
         <td>{{ stock.stock_symbol }}</td>
@@ -50,7 +48,6 @@
         </td>
       </tr>
     {% endif %}
->>>>>>> Add_User_Account_Balance_And_Sell_Stocks
   {% endfor %}
 
   <tr>
