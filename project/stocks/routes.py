@@ -72,33 +72,57 @@ def index():
 def add_stock():
     if request.method == 'POST':
         # Save the form data to the database
-        new_stock = Stock(request.form['stock_symbol'],
-                          request.form['number_of_shares'],
-                          request.form['purchase_price'],
-                          current_user.id,
-                          datetime.fromisoformat(request.form['purchase_date']))
-        database.session.add(new_stock)
-        database.session.commit()
+        if current_user.has_funds(request.form['purchase_price'], request.form['number_of_shares']):
+            new_stock = Stock(request.form['stock_symbol'],
+                        request.form['number_of_shares'],
+                        request.form['purchase_price'],
+                        current_user.id,
+                        datetime.fromisoformat(request.form['purchase_date']))
+            database.session.add(new_stock)
+            database.session.commit()
 
-        flash(f"Added new stock ({ request.form['stock_symbol'] })!", 'success')
-        current_app.logger.info(f"Added new stock ({ request.form['stock_symbol'] })!")
-        return redirect(url_for('stocks.list_stocks'))
+            current_user.subtract_funds(request.form['purchase_price'], request.form['number_of_shares'])
+            database.session.add(current_user)
+            database.session.commit()
+
+            flash(f"Added new stock ({ request.form['stock_symbol'] })!", 'success')
+            current_app.logger.info(f"Added new stock ({ request.form['stock_symbol'] })!")
+            return redirect(url_for('stocks.list_stocks'))
+        else:
+            flash(f"Not Enough Funds To Add Stock!", 'error')
+            current_app.logger.info(f"Not Enough Funds To Add Stock!")
+            return render_template('stocks/add_stock.html')
     else:
         return render_template('stocks/add_stock.html')
 
 
-@stocks_blueprint.route('/stocks')
+@stocks_blueprint.route('/stocks', methods=['GET', 'POST'])
 @login_required
 def list_stocks():
-    stocks = Stock.query.order_by(Stock.id).filter_by(user_id=current_user.id).all()
+    if request.method == 'POST':
+        # Get stock to sell
+        to_sell = Stock.query.get(int(request.form['sell_stock_id']))
+        # Update user funds
+        current_user.add_funds(to_sell.current_price / 100, to_sell.number_of_shares)
+        database.session.add(current_user)
+        database.session.commit()
+        # Clear stock
+        to_sell.number_of_shares = 0
+        database.session.add(to_sell)
+        database.session.commit()
 
-    current_account_value = 0.0
-    for stock in stocks:
-        stock.get_stock_data()
-        database.session.add(stock)
-        current_account_value += stock.get_stock_position_value()
-    database.session.commit()
-    return render_template('stocks/stocks.html', stocks=stocks, value=round(current_account_value, 2))
+        return redirect(url_for('stocks.list_stocks'))
+    else:
+        stocks = Stock.query.order_by(Stock.id).filter_by(user_id=current_user.id).all()
+
+        current_account_value = 0.0
+        for stock in stocks:
+            stock.get_stock_data()
+            database.session.add(stock)
+            if stock.number_of_shares > 0:
+                current_account_value += stock.get_stock_position_value()
+        database.session.commit()
+        return render_template('stocks/stocks.html', stocks=stocks, value=round(current_account_value, 2))
 
 
 @stocks_blueprint.route('/stocks/<id>')
