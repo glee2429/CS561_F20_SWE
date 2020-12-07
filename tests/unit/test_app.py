@@ -23,7 +23,6 @@ def test_about_page(test_client):
     """
     response = test_client.get('/users/about')
     assert response.status_code == 200
-    assert b'Stock Portfolio Management App' in response.data
     assert b'About' in response.data
     assert b'This application is built using the Flask web framework.' in response.data
     assert b'CS 561 Software Engineering Project' in response.data
