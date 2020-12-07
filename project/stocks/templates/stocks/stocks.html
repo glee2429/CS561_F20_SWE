@@ -23,17 +23,9 @@
 
   <!-- Table Elements (Rows) -->
   {% for stock in stocks %}
-    <tr>
-      <td><a href="{{ url_for('stocks.stock_details', id=stock.id) }}">{{ stock.stock_symbol }}</a></td>
-      <td>{{ stock.number_of_shares }}</td>
-      <td>${{ stock.purchase_price / 100 }}</td>
-      <td>{{ stock.purchase_date.strftime("%Y-%m-%d") }}</td>
-      <td>${{ stock.current_price / 100 }}</td>
-      <td>${{ stock.position_value / 100 }}</td>
-    </tr>
     {% if stock.number_of_shares > 0 %}
       <tr>
-        <td>{{ stock.stock_symbol }}</td>
+        <td><a href="{{ url_for('stocks.stock_details', id=stock.id) }}">{{ stock.stock_symbol }}</a></td>
         <td>{{ stock.number_of_shares }}</td>
         <td>${{ stock.purchase_price / 100 }}</td>
         <td>{{ stock.purchase_date.strftime("%Y-%m-%d") }}</td>
